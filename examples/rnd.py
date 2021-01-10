@@ -8,7 +8,6 @@ Quotes("CSNA3.sa", progress=False).data
 Quotes("USIM5.sa", progress=False).data
 
 # Generating random quotes.
-random_quotes = Quotes("rnd", seed=42).data.values
-print(random_quotes)
+print(Quotes("rnd", seed=42).data)
 # ...
 
