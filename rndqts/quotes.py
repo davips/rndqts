@@ -143,7 +143,7 @@ class Quotes:
             for d1, o1, h1, l1, c1, v1 in allvariations.values:
                 dic = {}
                 try:
-                    vol = int((int(v0 + 1) * int(v1 + 1)) + 1 % 99000999)
+                    vol = int(((int(v0 + 1) * int(v1 + 1)) + 1) % 99000999)
                     dic.update(Open=c0 * o1, High=c0 * h1, Low=c0 * l1, Close=c0 * c1, Volume=vol)
                 except:
                     raise Exception(v0, v1)
