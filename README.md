@@ -11,7 +11,10 @@ Random stock market quotes
 from rndqts.quotes import Quotes
 
 Quotes("PETR4.sa", progress=False).data
-# ```
+"""
+
+"""
+```
 
 
 </p>
@@ -32,7 +35,8 @@ Quotes("USIM5.sa", progress=False).data
 # Generating random quotes.
 random_quotes = Quotes("rnd", seed=42).data.values
 print(random_quotes)
-# [[1.00947569e+00 1.01632731e+00 1.00068496e+00 1.00548117e+00
+"""
+[[1.00947569e+00 1.01632731e+00 1.00068496e+00 1.00548117e+00
   3.00000000e+00]
  [1.03308968e+00 1.02043589e+00 1.05266991e+00 1.03492298e+00
   9.00000000e+00]
@@ -45,12 +49,17 @@ print(random_quotes)
   7.81903350e+07]
  [4.71360374e+01 4.71360374e+01 4.59864740e+01 4.68941008e+01
   5.73796740e+07]]
+
+"""
 ```
 
 ```python3
 
 
-# ```
+"""
+
+"""
+```
 
 
 </p>
