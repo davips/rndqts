@@ -1,5 +1,5 @@
-import math
 import glob
+import math
 import os
 import pickle
 from dataclasses import dataclass
@@ -21,11 +21,11 @@ class Quotes:
         Date
         2000-01-03  4.050103  4.050103  4.050103  4.050103  3.538944e+10
         >>> Quotes("rnd", seed=42).data[:3]  # doctest: +NORMALIZE_WHITESPACE
-                  Open      High       Low     Close  Volume
+                  Open      High       Low     Close Volume
         Date
-        0     0.993789  1.008568  0.980082  0.991862    1147
-        1     0.988887  1.010545  0.978772  1.010545    1109
-        2     1.011398  1.018755  1.005210  1.009264    2576
+        0     1.009476  1.016327  1.000685  1.005481      3
+        1     1.033090  1.020436  1.052670  1.034923      9
+        2     1.047446  1.031400  1.061204  1.038470     21
 
     Parameters
     ----------
@@ -43,7 +43,7 @@ class Quotes:
         if "None" not in [str(self.start), str(self.end)] and self.ticker == "rnd":
             raise Exception("Only the 'seed' argument is accepted by ticker 'rnd'.", [self.start, self.end])
         if self.seed is not None and self.ticker != "rnd":
-            raise Exception("Only 'rnd' ticker can hava a 'seed' argument.", self.seed, self.ticker)
+            raise Exception("Only the 'rnd' ticker can have a 'seed' argument.", self.seed, self.ticker)
         if self.seed is None:
             self.seed = 0
 
@@ -80,7 +80,7 @@ class Quotes:
                 c0 = c1 = 1
             if str(v1 / v0) in tocheck:
                 v0 = v1 = 1
-            dic.update(Date=i+1, Open=o1 / c0, High=h1 / c0, Low=l1 / c0, Close=c1 / c0, Volume=v1 / v0)
+            dic.update(Date=i + 1, Open=o1 / c0, High=h1 / c0, Low=l1 / c0, Close=c1 / c0, Volume=v1 / v0)
             rows.append(dic)
         return pd.DataFrame(rows)
 
@@ -143,7 +143,7 @@ class Quotes:
             for d1, o1, h1, l1, c1, v1 in allvariations.values:
                 dic = {}
                 try:
-                    vol = int((int(v0) * int(v1)) % 99000999)
+                    vol = int((int(v0 + 1) * int(v1 + 1)) + 1 % 99000999)
                     dic.update(Open=c0 * o1, High=c0 * h1, Low=c0 * l1, Close=c0 * c1, Volume=vol)
                 except:
                     raise Exception(v0, v1)
