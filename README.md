@@ -4,6 +4,27 @@
 # rndqts
 Random stock market quotes
 
+
+## Installation
+### from package
+```bash
+# Set up a virtualenv. 
+python3 -m venv venv
+source venv/bin/activate
+
+# Install from PyPI
+pip install rndqts
+```
+
+### from source
+```bash
+cd my-project
+git clone https://github.com/davips/rndqts ../rndqts
+pip install -e ../rndqts
+```
+
+## Examples
+
 **Fetching from Yahoo** <details>
 <p>
 
@@ -70,6 +91,24 @@ Date
 ```
 
 ```python3
+
+
+"""
+
+"""
+```
+
+
+</p>
+</details>
+
+**Saving as a CSV file** <details>
+<p>
+
+```python3
+from rndqts.quotes import Quotes
+
+Quotes("PETR4.sa", progress=False).data.to_csv("/tmp/myfile.csv")
 
 
 """

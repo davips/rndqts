@@ -108,10 +108,10 @@ class Quotes:
 
         # Look up at the cache.
         filename = f".rndqts/{self.ticker}§{self.start}§{self.end}§{self.seed}.pickle"
-        if self.ticker != "rnd":
-            if os.path.isfile(filename):
-                with open(filename, 'rb') as file:
-                    return pickle.load(file)
+        #if self.ticker != "rnd":
+        if os.path.isfile(filename):
+            with open(filename, 'rb') as file:
+                return pickle.load(file)
 
         # Fetch/generate data.
         if self.ticker == "rnd":
