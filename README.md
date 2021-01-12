@@ -34,7 +34,8 @@ from rndqts.quotes import Quotes
 print(Quotes("VALE3.sa").data)
 """
 Fetching VALE3.sa ...
-[*********************100%***********************]  1 of 1 completed
+
+[*********************100%***********************]  1 of 1 completed
                   Open        High        Low       Close    Volume
 Date                                                               
 2000-01-03    2.175114    2.201526   2.175114    2.175114    585600
@@ -158,5 +159,6 @@ Fetching VALE3.sa ...
 * [x] Random quotes
        * [x] Ticker 'pseudo' is an option to generate data without real quotes dependence (good for tests)
        * [ ] Explicit real quotes to sample from ('rnd-MSFT,APPL')
-       * [ ] 'n' argument fecthes lazily within date interval 
+       * [ ] 'n' argument fecthes lazily within date interval
+       * [ ] EXAMPLETICKER prepackaged as file to allow more comprehensive doctests
   

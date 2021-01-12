@@ -45,17 +45,10 @@ class Quotes:
         'pseudo':    just based on a seed
 
     Usage:
-        >>> # Caching a fictitious 'real' ticker for future 'rnd' call.
         >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
                  Open      High       Low     Close    Volume
         Date
-        0     1.038983  1.168526  0.903264  1.065995       0
-        >>> Quotes("rnd", seed=42).data[:3]  # doctest: +NORMALIZE_WHITESPACE
-                  Open      High       Low     Close  Volume
-        Date
-        0     1.200021  1.226008  1.196326  1.202129       5
-        1     1.031286  1.338619  0.969459  1.117780      13
-        2     1.318694  1.386048  1.054407  1.076145      29
+        0     1.047819  1.064518  0.851965  0.971409       1
 
     Parameters
     ----------
@@ -71,6 +64,7 @@ class Quotes:
     seed: int = None
     include_opposite: int = True
     scale: float = 0.1
+    slice: slice = None
     _replace: bool = False
     _data = None
 
@@ -89,6 +83,9 @@ class Quotes:
                 raise Exception("Only the 'seed' argument is accepted by ticker 'rnd'.", [self.start, self.end])
             if self.seed is not None and not random:
                 raise Exception("Only the 'rnd' ticker can have a 'seed' argument.", self.seed, self.ticker)
+        slic = self.slice and f"{self.slice.start}-{self.slice.stop}-{self.slice.step}"
+        args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{slic}"
+        self.filename = f".rndqts/{self.ticker}§{args}§{self.seed}.pickle"
 
     @cached_property
     def variations(self) -> DataFrame:
@@ -98,11 +95,11 @@ class Quotes:
         Usage:
             >>> from rndqts.quotes import Quotes
             >>> quotes = Quotes("pseudo", n=3)
-            >>> quotes.variations
+            >>> quotes.variations  # doctest: +NORMALIZE_WHITESPACE
                    Open      High       Low     Close      Volume
-            0  0.999654  1.043929  0.976825  1.039087  95181100.0
-            1  1.003995  1.028628  1.000333  1.001997  96562500.0
-            2  1.007973  1.034884  1.007973  1.029900  56171300.0
+            Date
+            0     1.012494  1.031401  0.996855  1.008132     1.0
+            1     0.987351  1.014483  0.977188  0.991337     1.0
 
         Parameters
         ----------
@@ -129,7 +126,7 @@ class Quotes:
         return df.applymap(lambda a: a if -lim < a < lim else -lim if a < 0 else lim)
 
     @property
-    def data(self):
+    def data(self):  # TODO: Add example for 'rnd' and 'EXAMPLETICKER'
         """
         Return Date Open High Low Close Volume
 
@@ -139,24 +136,9 @@ class Quotes:
             >>> Quotes("pseudo", n=3).data  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
             Date
-            0     0.986221  1.014387  0.930231  0.933359       0
-            1     1.010006  1.039104  0.897452  1.022771       1
-            2     1.129749  1.135103  1.037189  1.119618       0
-            >>> # Replace 'pseudo' by another real ticker.
-            >>> Quotes("pseudo", n=3, seed=42).data  # doctest: +NORMALIZE_WHITESPACE
-                      Open      High       Low     Close    Volume
-            Date
-            0     1.032654  1.049671  0.986174  1.024187       0
-            1     1.004030  1.185928  1.000207  1.180340       1
-            2     1.146646  1.244380  1.124926  1.146834       1
-            >>> Quotes("rnd").data[:5]  # doctest: +NORMALIZE_WHITESPACE
-                      Open      High       Low     Close  Volume
-            Date
-            0     0.933500  0.936102  0.933252  0.933267       5
-            1     1.022062  1.027780  0.869450  1.011315      13
-            2     0.958251  0.958263  0.953647  0.955773      29
-            3     0.944325  0.974614  0.930857  0.936998      61
-            4     0.999777  1.002162  0.978533  0.989806     125
+            0     0.791850  0.908542  0.767585  0.876627       0
+            1     0.688895  0.773534  0.632679  0.717124       0
+            2     0.683110  0.806367  0.558580  0.662190       1
 
         Returns
         -------
@@ -167,11 +149,8 @@ class Quotes:
                 os.makedirs('.rndqts')
 
             # Look up at the cache.
-            args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{self.seed}"
-            filename = f".rndqts/{self.ticker}§{args}.pickle"
-            # if self.ticker != "rnd":
-            if os.path.isfile(filename):
-                with open(filename, 'rb') as file:
+            if os.path.isfile(self.filename):
+                with open(self.filename, 'rb') as file:
                     self._data = pickle.load(file)
                     return self._data
 
@@ -259,21 +238,18 @@ class Quotes:
                 df = yf.download(self.ticker, auto_adjust=True, start=self.start, end=self.end, progress=self.progress)
 
             self._data = df if self.n is None else df[:self.n]
-
-            # Write to the cache.
-            with open(filename, 'wb') as file:
-                pickle.dump(self._data, file)
+            self.store()
 
         return self._data
+
+    def store(self):
+        """Write data to the local cache."""
+        with open(self.filename, 'wb') as file:
+            pickle.dump(self._data, file)
 
     def save_csv(self, filename=None):
         """
         Usage:
-            >>> # Caching for future 'rnd' call.
-            >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
-                     Open      High       Low     Close    Volume
-            Date
-            0     1.038983  1.168526  0.903264  1.065995       0
             >>> quotes = Quotes("pseudo", seed=42)
             >>> quotes.save_csv("/run/shm/rndqts-doctest.csv")
             >>> quotes.save_csv()  # Default name: pseudo_None_None_42.csv.
@@ -294,7 +270,7 @@ class Quotes:
         """Item or slice
 
         Usage:
-        >>> quotes = Quotes("pseudo", progress=False)[:5]
+        >>> quotes = Quotes("pseudo")[:5]
         >>> quotes.plot()  # doctest: +SKIP
         """
         df = self.data
@@ -306,7 +282,7 @@ class Quotes:
         """Item or slice
 
         Usage:
-        >>> quotes = Quotes("pseudo", progress=False)[:2]
+        >>> quotes = Quotes("pseudo")[:2]
         >>> sliced_quotes = quotes[:2]
         >>> sliced_data = quotes.data[:2]
         >>> all(sliced_quotes == sliced_data)
@@ -315,10 +291,26 @@ class Quotes:
         newdf = self.data[item]
         if isinstance(newdf, DataFrame):
             n = newdf.shape[0]
-            newquotes = replace(self, n=n, _replace=True)
+            newquotes = replace(self, slice=item, n=n, _replace=True)
             newquotes._data = newdf
+            newquotes.store()
             return newquotes
         return newdf
 
     def show(self):
+        """
+        Usage:
+            >>> Quotes("pseudo")[:5].show()  # doctest: +NORMALIZE_WHITESPACE
+                      Open      High       Low     Close  Volume
+            Date
+            0     1.047819  1.064518  0.851965  0.971409       1
+            1     0.911649  1.038649  0.905199  0.994486       0
+            2     1.033183  1.052464  0.923934  0.935493       1
+            3     0.841302  0.889959  0.837215  0.861448       1
+            4     0.843304  0.878349  0.806405  0.816766       0
+
+        Returns
+        -------
+
+        """
         print(self.data)
