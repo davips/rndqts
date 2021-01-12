@@ -32,7 +32,7 @@ pip install -e ../rndqts
 <<ascsv>>
 
 <<plot>>
-![Output as a browser window.](examples/plotvale3.png?raw=true)
+<p><img src="examples/plotvale3.png" alt="Output as a browser window" width="180" height="240"></p>
 
 
 ## Features / TODO
@@ -44,5 +44,7 @@ pip install -e ../rndqts
 * [x] Random quotes
        * [x] Ticker 'pseudo' is an option to generate data without real quotes dependence (good for tests)
        * [ ] Explicit real quotes to sample from ('rnd-MSFT,APPL')
-       * [ ] 'n' argument fecthes lazily within date interval 
-  
+       * [ ] 'n' argument fetches lazily within date interval 
+       * [ ] EXAMPLETICKER prepackaged as file to allow more comprehensive doctests
+
+

@@ -64,13 +64,13 @@ class Quotes:
     seed: int = None
     include_opposite: int = True
     scale: float = 0.1
-    slice: slice = None
+    slice: str = None
     _replace: bool = False
     _data = None
 
     def __post_init__(self):
         self.scale = float(self.scale)
-        none_args = ["start", "end", "n", "seed"]
+        none_args = ["start", "end", "n", "seed", "slice"]
         for arg in none_args:
             if getattr(self, arg) == "None":
                 setattr(self, arg, None)
@@ -83,8 +83,7 @@ class Quotes:
                 raise Exception("Only the 'seed' argument is accepted by ticker 'rnd'.", [self.start, self.end])
             if self.seed is not None and not random:
                 raise Exception("Only the 'rnd' ticker can have a 'seed' argument.", self.seed, self.ticker)
-        slic = self.slice and f"{self.slice.start}-{self.slice.stop}-{self.slice.step}"
-        args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{slic}"
+        args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{self.slice}"
         self.filename = f".rndqts/{self.ticker}§{args}§{self.seed}.pickle"
 
     @cached_property
@@ -182,9 +181,9 @@ class Quotes:
                 quotes_objects = []
                 for f in files:
                     if "rnd§" not in f:
-                        ticker, start, end, n, rev, scale, lim, seed = f[8:-7].split("§")
+                        ticker, start, end, n, rev, scale, lim, slic, seed = f[8:-7].split("§")
                         quotes_objects.append(
-                            Quotes(ticker=ticker, start=start, end=end,
+                            Quotes(ticker=ticker, start=start, end=end, slice=slic,
                                    n=n, include_opposite=bool(rev), scale=scale, lim=float(lim))
                         )
 
@@ -291,7 +290,7 @@ class Quotes:
         newdf = self.data[item]
         if isinstance(newdf, DataFrame):
             n = newdf.shape[0]
-            newquotes = replace(self, slice=item, n=n, _replace=True)
+            newquotes = replace(self, slice=str(item).replace(" ", "-"), n=n, _replace=True)
             newquotes._data = newdf
             newquotes.store()
             return newquotes
