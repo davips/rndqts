@@ -147,7 +147,7 @@ Fetching VALE3.sa ...
 
 </p>
 </details>
-![Output as a browser window.](https://github.com/davips/rndqts/blob/main/examples/plotvale3.png?raw=true)
+![Output as a browser window.](https://raw.githubusercontent.com/davips/rndqts/main/examples/plotvale3.png?raw=true)
 
 
 ## Features / TODO
