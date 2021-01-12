@@ -26,13 +26,13 @@ class Quotes:
         >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
                  Open      High       Low     Close    Volume
         Date
-        0     1.35281  1.448179  1.080031  1.195748  74753034
+        0     1.024907  1.087671  0.785833  0.946021       1
         >>> Quotes("rnd", seed=42).data[:3]  # doctest: +NORMALIZE_WHITESPACE
                   Open      High       Low     Close  Volume
         Date
-        0     0.941916  0.806452  1.380485  1.054535       3
-        1     0.864990  1.286075  0.829096  0.945686       9
-        2     0.896303  0.936274  0.725149  0.863001      11
+        0     0.992071  1.012590  0.974892  0.985990       3
+        1     1.280855  1.315453  1.028866  1.187199       9
+        2     1.202997  1.202997  1.160224  1.166542      11
 
     Parameters
     ----------
@@ -46,8 +46,8 @@ class Quotes:
     n: int = None
     lim: float = 24
     seed: int = None
-    include_reverse: int = True
-    scale: float = 0.2
+    include_opposite: int = True
+    scale: float = 0.1
     _replace: bool = False
     _data = None
 
@@ -68,7 +68,7 @@ class Quotes:
                 raise Exception("Only the 'rnd' ticker can have a 'seed' argument.", self.seed, self.ticker)
 
     @cached_property
-    def variations(self):
+    def variations(self) -> DataFrame:
         """
         Only variations up to 'lim' are kept.
 
@@ -113,27 +113,27 @@ class Quotes:
         Usage:
             >>> from rndqts.quotes import Quotes
             >>> # Replace 'pseudo' by any real ticker.
-            >>> Quotes("pseudo",n=3).data  # doctest: +NORMALIZE_WHITESPACE
+            >>> Quotes("pseudo", n=3).data  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
             Date
-            0     1.352810  1.448179  1.080031  1.195748  74753034
-            1     1.074767  1.666854  0.994211  1.498539  48220335
-            2     1.835805  1.864365  1.097082  1.390945  86414068
+            0     1.025777  1.054313  0.971992  1.019134       0
+            1     1.070194  1.146599  1.033291  1.144801       1
+            2     1.193610  1.213115  1.177689  1.184190       1
             >>> # Replace 'pseudo' by another real ticker.
             >>> Quotes("pseudo", n=3, seed=42).data  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
             Date
-            0     1.352810  1.448179  1.080031  1.195748  74753034
-            1     1.074767  1.666854  0.994211  1.498539  48220335
-            2     1.835805  1.864365  1.097082  1.390945  86414068
+            0     1.032654  1.049671  0.986174  1.024187       0
+            1     1.004030  1.185928  1.000207  1.180340       1
+            2     1.146646  1.244380  1.124926  1.146834       1
             >>> Quotes("rnd").data[:5]  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close  Volume
             Date
-            0     1.225063  1.240000  0.732101  0.928201       5
-            1     1.032683  0.748549  1.116357  0.748549      13
-            2     0.917020  0.928201  0.548013  0.694804      29
-            3     0.624507  0.861557  0.577698  0.861557      31
-            4     0.703276  0.694804  1.176828  0.928201      33
+            0     0.986864  1.020374  0.980958  1.018644       3
+            1     1.037262  1.074988  1.022849  1.023250       9
+            2     1.111976  1.115294  1.105926  1.112807      21
+            3     1.122214  1.130817  1.105394  1.108162      45
+            4     1.106056  1.126036  1.096329  1.114531      93
 
         Returns
         -------
@@ -144,7 +144,7 @@ class Quotes:
                 os.makedirs('.rndqts')
 
             # Look up at the cache.
-            args = f"{self.start}§{self.end}§{self.n}§{self.include_reverse}§{self.scale}§{self.lim}§{self.seed}"
+            args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{self.seed}"
             filename = f".rndqts/{self.ticker}§{args}.pickle"
             # if self.ticker != "rnd":
             if os.path.isfile(filename):
@@ -155,22 +155,20 @@ class Quotes:
             # Fetch/generate data.
             if self.ticker == "pseudo":
                 # Random quotes from a seed.  #########################################################################
-                rnd = np.random.RandomState(seed=0)  # rnd = np.random.default_rng(seed)
+                rnd = np.random.RandomState(seed=self.seed)
                 rows = []
-                r = lambda: 1 + rnd.normal(scale=self.scale)
+                r = lambda: abs(1 + rnd.normal(scale=self.scale))
                 c0, v0 = 1, 1
                 n = 0 if self.n is None else self.n
                 for i in range(max(1000, n)):
-                    o1, h1, l1, c1, v1 = r(), r(), r(), r(), rnd.random_integers(1, 100000000)
+                    hilo = [c0 * r(), c0 * r()]
+                    hi, lo = max(hilo), min(hilo)
+                    op, cl = rnd.uniform(lo, hi), rnd.uniform(lo, hi)
+                    vl = int(v0 * r())
                     dic = {}
-                    dic.update(Open=c0 * o1, High=c0 * h1, Low=c0 * l1, Close=c0 * c1)
-                    s = sorted(dic.values())
-                    dic["High"] = s[-1]
-                    dic["Low"] = s[0]
-                    dic["Open"] = rnd.choice([s[1], s[2]])
-                    c0 = dic["Close"] = s[2] if s[2] != dic["Open"] else s[1]
-                    dic.update(Volume=v0 * v1)
+                    dic.update(Open=op, High=hi, Low=lo, Close=cl, Volume=vl)
                     rows.append(dic)
+                    c0 = cl
                 df = pd.DataFrame(rows)
                 df.index.name = "Date"
             elif self.ticker == "rnd":
@@ -185,18 +183,32 @@ class Quotes:
                         ticker, start, end, n, rev, scale, lim, seed = f[8:-7].split("§")
                         quotes_objects.append(
                             Quotes(ticker=ticker, start=start, end=end,
-                                   n=n, include_reverse=bool(rev), scale=scale, lim=float(lim))
+                                   n=n, include_opposite=bool(rev), scale=scale, lim=float(lim))
                         )
+
+                def opposite(qs: Quotes):
+                    qs_op = qs.variations.applymap(lambda a: 1 / a)
+                    newrows = []
+                    for idx, row in qs_op.iterrows():
+                        newrow = row.to_dict()
+                        if row['High'] < row['Low']:
+                            newrow["Low"] = row['High']
+                            newrow["High"] = row['Low']
+                        newrows.append(newrow)
+                    df_op = DataFrame(newrows)
+                    df_op.index.name = "Date"
+                    return df_op
 
                 # Calculate variations and concatenate all tickers.
                 alldfs = quotes_objects[0].variations
-                if self.include_reverse:
-                    alldfs = alldfs.append(quotes_objects[0].variations.applymap(lambda a: 1 / a), ignore_index=True)
+                if self.include_opposite:
+                    # alldfs = opposite(quotes_objects[0])
+                    alldfs = alldfs.append(opposite(quotes_objects[0]), ignore_index=True)
                 if len(quotes_objects) > 1:
                     for quotes in quotes_objects[1:]:
                         alldfs = alldfs.append(quotes.variations, ignore_index=True)
-                        if self.include_reverse:
-                            alldfs = alldfs.append(quotes.variations.applymap(lambda a: 1 / a), ignore_index=True)
+                        if self.include_opposite:
+                            alldfs = alldfs.append(opposite(quotes), ignore_index=True)
 
                 # Shuffle variations.
                 allvariations = alldfs.sample(frac=1, random_state=self.seed).reset_index(drop=True)
@@ -205,18 +217,16 @@ class Quotes:
                 c0 = 1
                 v0 = 1
                 rows = []
-                for o1, h1, l1, c1, v1 in allvariations.values:
+                for o1var, h1var, l1var, c1var, v1var in allvariations.values:
                     dic = {}
                     try:
-                        vol = int(((int(v0 + 1) * int(v1 + 1)) + 1) % 99000999)
-                        dic.update(Open=c0 * o1, High=c0 * h1, Low=c0 * l1, Close=c0 * c1)
-                        # dic["High"] = max(dic.values())
-                        # dic["Low"] = min(dic.values())
+                        vol = int(((int(v0 + 1) * int(v1var + 1)) + 1) % 99000999)
+                        dic.update(Open=c0 * o1var, High=c0 * h1var, Low=c0 * l1var, Close=c0 * c1var)
                         dic.update(Volume=vol)
                     except:
-                        raise Exception(v0, v1)
+                        raise Exception(v0, v1var)
                     rows.append(dic)
-                    c0 *= c1
+                    c0 *= c1var
                     v0 = vol
                 df = pd.DataFrame(rows)
                 df.index.name = "Date"
@@ -237,10 +247,10 @@ class Quotes:
         """
         Usage:
             >>> # Caching for future 'rnd' call.
-            >>> Quotes("pseudo", progress=False).data[:1]  # doctest: +NORMALIZE_WHITESPACE
+            >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
                      Open      High       Low     Close    Volume
             Date
-            0     1.35281  1.448179  1.080031  1.195748  74753034
+            0     1.024907  1.087671  0.785833  0.946021       1
             >>> quotes = Quotes("pseudo", seed=42)
             >>> quotes.save_csv("/run/shm/rndqts-doctest.csv")
             >>> quotes.save_csv()  # Default name: pseudo_None_None_42.csv.
@@ -286,3 +296,6 @@ class Quotes:
             newquotes._data = newdf
             return newquotes
         return newdf
+
+    def show(self):
+        print(self.data)
