@@ -30,3 +30,15 @@ pip install -e ../rndqts
 <<rnd>>
 
 <<ascsv>>
+
+## Features / TODO
+
+* [x] Fetch from yahoo
+* [x] Automatic local caching
+* [x] Slicing
+* [x] Plot candle sticks
+* [x] Random quotes
+       * [x] Ticker 'pseudo' is an option to generate data without real quotes dependence (good for tests)
+       * [ ] Explicit real quotes to sample from ('rnd-MSFT,APPL')
+       * [ ] 'n' argument fecthes lazily within date interval 
+  
