@@ -1,4 +1,4 @@
-# Fetching from Yahoo
+# Plotting
 from rndqts.quotes import Quotes
 
 Quotes("VALE3.sa")[1000:1060].plot()

@@ -49,13 +49,13 @@ class Quotes:
         >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
                  Open      High       Low     Close    Volume
         Date
-        0     1.024907  1.087671  0.785833  0.946021       1
+        0     1.038983  1.168526  0.903264  1.065995       0
         >>> Quotes("rnd", seed=42).data[:3]  # doctest: +NORMALIZE_WHITESPACE
                   Open      High       Low     Close  Volume
         Date
-        0     0.992071  1.012590  0.974892  0.985990       3
-        1     1.280855  1.315453  1.028866  1.187199       9
-        2     1.202997  1.202997  1.160224  1.166542      11
+        0     1.200021  1.226008  1.196326  1.202129       5
+        1     1.031286  1.338619  0.969459  1.117780      13
+        2     1.318694  1.386048  1.054407  1.076145      29
 
     Parameters
     ----------
@@ -139,9 +139,9 @@ class Quotes:
             >>> Quotes("pseudo", n=3).data  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
             Date
-            0     1.025777  1.054313  0.971992  1.019134       0
-            1     1.070194  1.146599  1.033291  1.144801       1
-            2     1.193610  1.213115  1.177689  1.184190       1
+            0     0.986221  1.014387  0.930231  0.933359       0
+            1     1.010006  1.039104  0.897452  1.022771       1
+            2     1.129749  1.135103  1.037189  1.119618       0
             >>> # Replace 'pseudo' by another real ticker.
             >>> Quotes("pseudo", n=3, seed=42).data  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
@@ -152,11 +152,11 @@ class Quotes:
             >>> Quotes("rnd").data[:5]  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close  Volume
             Date
-            0     0.986864  1.020374  0.980958  1.018644       3
-            1     1.037262  1.074988  1.022849  1.023250       9
-            2     1.111976  1.115294  1.105926  1.112807      21
-            3     1.122214  1.130817  1.105394  1.108162      45
-            4     1.106056  1.126036  1.096329  1.114531      93
+            0     0.933500  0.936102  0.933252  0.933267       5
+            1     1.022062  1.027780  0.869450  1.011315      13
+            2     0.958251  0.958263  0.953647  0.955773      29
+            3     0.944325  0.974614  0.930857  0.936998      61
+            4     0.999777  1.002162  0.978533  0.989806     125
 
         Returns
         -------
@@ -273,7 +273,7 @@ class Quotes:
             >>> Quotes("pseudo").data[:1]  # doctest: +NORMALIZE_WHITESPACE
                      Open      High       Low     Close    Volume
             Date
-            0     1.024907  1.087671  0.785833  0.946021       1
+            0     1.038983  1.168526  0.903264  1.065995       0
             >>> quotes = Quotes("pseudo", seed=42)
             >>> quotes.save_csv("/run/shm/rndqts-doctest.csv")
             >>> quotes.save_csv()  # Default name: pseudo_None_None_42.csv.
