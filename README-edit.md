@@ -32,7 +32,10 @@ pip install -e ../rndqts
 <<ascsv>>
 
 <<plot>>
-<p><img src="examples/plotvale3.png" alt="Output as a browser window" width="180" height="240"></p>
+
+<p><a href="https://github.com/davips/rndqts/blob/main/examples/plotvale3.png">
+<img src="examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
+</a></p>
 
 
 ## Features / TODO

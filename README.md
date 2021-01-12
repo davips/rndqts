@@ -71,14 +71,6 @@ Quotes("USIM5.sa", progress=False).data
 # Generating random quotes.
 print(Quotes("rnd", seed=42).data)
 """
-Fetching USIM5.sa ...
-[*********************100%***********************]  1 of 1 completed
-Fetching CSNA3.sa ...
-[*********************100%***********************]  1 of 1 completed
-Fetching PETR4.sa ...
-[*********************100%***********************]  1 of 1 completed
-Fetching VALE3.sa ...
-[*********************100%***********************]  1 of 1 completed
            Open      High       Low     Close    Volume
 Date                                                   
 0      1.006622  1.030463  0.997351  1.001324         3
@@ -149,7 +141,10 @@ Fetching VALE3.sa ...
 
 </p>
 </details>
-<p><img src="examples/plotvale3.png" alt="Output as a browser window" width="180" height="240"></p>
+
+<p><a href="https://github.com/davips/rndqts/blob/main/examples/plotvale3.png">
+<img src="examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
+</a></p>
 
 
 ## Features / TODO
