@@ -31,6 +31,10 @@ pip install -e ../rndqts
 
 <<ascsv>>
 
+<<plot>>
+![Output as a browser window.](examples/plotvale3.png?raw=true)
+
+
 ## Features / TODO
 
 * [x] Fetch from yahoo
