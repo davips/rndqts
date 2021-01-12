@@ -145,9 +145,9 @@ Fetching VALE3.sa ...
 ```
 
 
+<p><img src="examples/plotvale3.png" alt="Output as a browser window"></p>
 </p>
 </details>
-![Output as a browser window.](examples/plotvale3.png)
 
 
 ## Features / TODO
