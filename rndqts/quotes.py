@@ -30,7 +30,6 @@ import math
 import os
 import pickle
 from dataclasses import dataclass
-from functools import cached_property
 
 import pandas as pd
 import yfinance as yf
@@ -67,6 +66,7 @@ class Quotes:
     slice: str = None
     _replace: bool = False
     _data = None
+    _variations = None
 
     def __post_init__(self):
         self.scale = float(self.scale)
@@ -86,7 +86,7 @@ class Quotes:
         args = f"{self.start}§{self.end}§{self.n}§{self.include_opposite}§{self.scale}§{self.lim}§{self.slice}"
         self.filename = f".rndqts/{self.ticker}§{args}§{self.seed}.pickle"
 
-    @cached_property
+    @property
     def variations(self) -> DataFrame:
         """
         Only variations up to 'lim' are kept.
@@ -108,21 +108,23 @@ class Quotes:
         -------
             DataFrame containg the variation when compared to the previous 'close'.
         """
-        rows = []
-        for (o1, h1, l1, c1, v1), c0, v0 in \
-                zip(self.data.values[1:], self.data["Close"].values, self.data["Volume"].values):
-            dic = {}
-            tocheck = [str(math.inf), str(math.nan), str(0.0)]
-            if str(c1 / c0) in tocheck:
-                c0 = c1 = 1
-            if str(v1 / v0) in tocheck:
-                v0 = v1 = 1
-            dic.update(Open=o1 / c0, High=h1 / c0, Low=l1 / c0, Close=c1 / c0, Volume=v1 / v0)
-            rows.append(dic)
-        df = pd.DataFrame(rows)
-        df.index.name = "Date"
-        lim = self.lim / 100 + 1
-        return df.applymap(lambda a: a if -lim < a < lim else -lim if a < 0 else lim)
+        if self._variations is None:
+            rows = []
+            for (o1, h1, l1, c1, v1), c0, v0 in \
+                    zip(self.data.values[1:], self.data["Close"].values, self.data["Volume"].values):
+                dic = {}
+                tocheck = [str(math.inf), str(math.nan), str(0.0)]
+                if str(c1 / c0) in tocheck:
+                    c0 = c1 = 1
+                if str(v1 / v0) in tocheck:
+                    v0 = v1 = 1
+                dic.update(Open=o1 / c0, High=h1 / c0, Low=l1 / c0, Close=c1 / c0, Volume=v1 / v0)
+                rows.append(dic)
+            df = pd.DataFrame(rows)
+            df.index.name = "Date"
+            lim = self.lim / 100 + 1
+            self._variations = df.applymap(lambda a: a if -lim < a < lim else -lim if a < 0 else lim)
+        return self._variations
 
     @property
     def data(self):  # TODO: Add example for 'rnd' and 'EXAMPLETICKER'
