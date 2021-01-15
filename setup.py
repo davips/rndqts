@@ -52,7 +52,7 @@ CLASSIFIERS = ['Intended Audience :: Science/Research',
                'Programming Language :: Python :: 3.7']
 
 INSTALL_REQUIRES = [
-    'yfinance', 'matplotlib', 'plotly'
+    'yfinance', 'matplotlib', 'plotly', 'numpy'
 ]
 
 EXTRAS_REQUIRE = {
