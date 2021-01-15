@@ -120,10 +120,9 @@ class Realistic(Quotes):
             qs_op = qs.variations.applymap(lambda a: 1 / a)
             newrows = []
             for idx, row in qs_op.iterrows():
-                newrow = row.to_dict()
-                if row['High'] < row['Low']:
-                    newrow["Low"] = row['High']
-                    newrow["High"] = row['Low']
+                newrow = dict(row.to_dict())
+                newrow["Low"] = row['High']
+                newrow["High"] = row['Low']
                 newrows.append(newrow)
             df_op = DataFrame(newrows)
             df_op.index.name = "Date"

@@ -11,3 +11,7 @@ r4 = Real("USIM5.sa")
 # Generating random quotes.
 print(Realistic([r1, r2, r3, r4]).data)
 # ...
+
+
+Realistic([r1, r2, r3, r4]).plot()
+print(Realistic([r1, r2, r3, r4]).id)
