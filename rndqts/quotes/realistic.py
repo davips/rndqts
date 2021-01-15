@@ -44,6 +44,7 @@ import math
 from dataclasses import dataclass
 
 import pandas as pd
+from garoupa import Hash
 from pandas import DataFrame
 
 from rndqts.quotes.abs.quotes import Quotes
@@ -82,14 +83,12 @@ class Realistic(Quotes):
     varlim_pct: float = 24.99
     verbosity: int = 1
     _slice: slice = None
+    _id: str = None
 
     def __post_init__(self):
-        super().__init__(self.verbosity, self._slice)
-
-    def _id_(self):
         base = [qid for qid in sorted(q.id for q in self.base)]
         cfg = f"{base}-{self.seed}-{self.include_opposite}-{self.varlim_pct}-{self._slice}"
-        return hashlib.md5(cfg.encode()).hexdigest()
+        super().__init__(self.verbosity, self._slice, self._id or Hash(cfg.encode()).id)
 
     @property
     def data(self):  # Override just to specialize doctest.

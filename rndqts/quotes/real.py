@@ -35,6 +35,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 import yfinance as yf
+from garoupa import Hash
 from pandas import DataFrame
 
 from rndqts.quotes.abs.quotes import Quotes
@@ -75,13 +76,11 @@ class Real(Quotes):
     end: str = "2020-12-31"
     verbosity: int = 1
     _slice: slice = None
+    _id: str = None
 
     def __post_init__(self):
-        super().__init__(self.verbosity, self._slice)
-
-    def _id_(self):
         cfg = f"{self.ticker}-{self.start}-{self.end}-{self._slice}"
-        return hashlib.md5(cfg.encode()).hexdigest()
+        super().__init__(self.verbosity, self._slice, self._id or Hash(cfg.encode()).id)
 
     @property
     def data(self):  # Override just to specialize doctest.

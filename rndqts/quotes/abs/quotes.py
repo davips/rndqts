@@ -25,34 +25,25 @@ import math
 import os
 import pickle
 from abc import ABC, abstractmethod
-from dataclasses import replace
+from dataclasses import replace, dataclass
 
 import pandas as pd
 import plotly.graph_objects as go
+from garoupa import Hash
 from pandas import DataFrame
 
 
 class Quotes(ABC):
     """Base-class for different types of quote generators."""
     _data = None
-    _variations = None
-    _id = None
 
-    def __init__(self, verbosity: int, _slice: slice):
+    def __init__(self, verbosity: int, _slice: slice, _id: str):
         self.verbosity = verbosity
         _slice = _slice or slice(199999999)
         self._slice = slice(_slice.start or 0, _slice.stop, _slice.step or 1)
+        self.id = _id
         self.filename = f".rndqts/{self.id}.pickle"
-
-    @property
-    def id(self):
-        if self._id is None:
-            self._id = self._id_()
-        return self._id
-
-    @abstractmethod
-    def _id_(self):
-        pass
+        self._variations = None
 
     @property
     def data(self) -> DataFrame:
@@ -189,9 +180,8 @@ class Quotes(ABC):
             if item.stop is None:
                 raise Exception(f"Ths slice {item} will never end.")
             # noinspection PyDataclass
-            newquotes = replace(self, _slice=item)
+            newquotes = replace(self, _slice=item, _id=None)
             newquotes._data = self.data[item]
-            newquotes._variations = None
             newquotes.store()
             return newquotes
         elif isinstance(item, int):
@@ -230,3 +220,42 @@ class Quotes(ABC):
         """Remove excessively intense variations"""
         lim = varlim_pct / 100 + 1
         return variations.applymap(lambda a: a if -lim < a < lim else -lim if a < 0 else lim)
+
+    def __getattr__(self, item):
+        """Redirect any pandas attribute to self.data"""
+        # TODO: __add__ etc. (through pandas or manually)
+        if item in dir(pd.DataFrame):  # and not item.startswith("_"):
+            attribute = getattr(self.data, item)
+
+            # Handle methods.
+            if callable(attribute) or isinstance(attribute, classmethod):
+                return DFWrapper(self, attribute)
+
+            # Handle direct df value.
+            if isinstance(attribute, DataFrame):
+                # noinspection PyDataclass
+                newquotes = replace(self, _id=Hash(attribute.to_csv().encode()).id)
+                newquotes._data = attribute
+                newquotes.store()
+                return newquotes
+
+            # Handle other direct values.
+            return attribute
+
+        print(item)
+        return super().__getattribute__(item)
+
+
+@dataclass
+class DFWrapper:
+    quotes: Quotes
+    attribute: callable
+
+    def __call__(self, *args, **kwargs):
+        val = self.attribute(*args, **kwargs)
+        if isinstance(val, DataFrame):
+            # noinspection PyDataclass
+            newquotes = replace(self.quotes, _id=Hash(val.to_csv().encode()).id)
+            newquotes._data = val
+            newquotes.store()
+            return newquotes
