@@ -1,5 +1,5 @@
 # Fetching from Yahoo
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-print(Quotes("VALE3.sa").data)
+print(Real("VALE3.sa").data)
 # ...

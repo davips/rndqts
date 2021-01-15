@@ -52,22 +52,13 @@ pip install -e ../rndqts
 * [x] Realistic random quotes
   * [x] Ticker 'pseudo' generates (not so realistic) data without real quotes dependence (good for tests)
 
-* [ ] **Separate classes: Real, Random, Pseudo**
-  * [ ] Cacheable and identified by hash of args
+* [x] **Distinct kinds of quotes: Real, Realistic random, Synthetic Random**
+  * [x] Cacheable and identified by hash of args
   
-  * [ ] ***Real*** (market quotes)
-    * [ ] Args: ticker, start/end dates, slice<sup>1</sup>
-      * [ ] Default dates interval: 2020-01-01 - 2020-12-31
-  
-  * [ ] ***Random*** (realistic random quotes, .i.e, it is based on real quotes)
-    * [ ] Args: rndqts objects, seed, slice<sup>1</sup>
-
-
-  * [ ] ***Pseudo*** (pseudo random quotes)
-    * [ ] Args: seed, slice<sup>1</sup>
-    * [ ] Lazy
+  * [x] ***Real*** (market quotes)
+  * [x] ***Realistic*** (realistic random quotes, .i.e, it is based on real quotes)
+  * [x] ***Synthetic*** (quotes based interily on Gaussian distributions from pseudo random number generator)
+    * [x] Lazy/Infinite
 
 * [ ] News fetching
     * [ ] https://blog.datahut.co/scraping-nasdaq-news-using-python
-    
-<sup>1</sup>Slicing is intended to be done via squared brackets syntax, e.g., `quotes[3:40]`, not directly.

@@ -30,30 +30,37 @@ pip install -e ../rndqts
 
 ## Examples
 
-**Fetching from Yahoo** <details>
+**Fetching from Yahoo**
+<details>
 <p>
 
 ```python3
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-print(Quotes("VALE3.sa").data)
+print(Real("VALE3.sa").data)
 """
-                  Open        High        Low       Close    Volume
-Date                                                               
-2000-01-03    2.175114    2.201526   2.175114    2.175114    585600
-2000-01-04    2.154401    2.159062   2.123328    2.123328    782400
-2000-01-05    2.097431    2.123328   2.097431    2.123328   1876800
-2000-01-06    2.123328    2.175114   2.123328    2.123328    792000
-2000-01-07    2.149217    2.211886   2.149217    2.201010   5347200
-...                ...         ...        ...         ...       ...
-2021-01-06   94.980003   96.349998  94.400002   96.050003  53722500
-2021-01-07   96.610001  102.529999  96.610001  102.320000  74541400
-2021-01-08  103.010002  103.349998  98.199997  101.260002  43879400
-2021-01-11  100.250000  101.959999  99.699997  101.800003  18259400
-2021-01-12  102.500000  102.620003  99.180000   99.540001  24770000
-
-[5259 rows x 5 columns]
-
+                 Open       High        Low      Close    Volume
+Date                                                            
+2020-12-01  79.830002  81.500000  79.250000  81.250000  61441200
+2020-12-02  80.900002  81.250000  77.309998  79.839996  53703300
+2020-12-03  81.000000  81.050003  78.610001  78.959999  35158600
+2020-12-04  80.099998  82.680000  80.099998  82.269997  38441000
+2020-12-07  82.419998  82.989998  81.669998  82.949997  27398500
+2020-12-08  82.970001  83.300003  81.660004  82.900002  28598800
+2020-12-09  83.099998  83.830002  82.220001  82.699997  26938500
+2020-12-10  83.650002  85.220001  83.199997  85.000000  41230700
+2020-12-11  84.620003  85.279999  84.400002  84.760002  17825100
+2020-12-14  85.199997  85.220001  82.949997  83.550003  20931700
+2020-12-15  83.550003  85.379997  83.550003  84.500000  18762800
+2020-12-16  84.900002  86.230003  84.360001  86.220001  23038300
+2020-12-17  86.500000  87.949997  86.169998  87.199997  21367800
+2020-12-18  87.620003  88.349998  87.430000  88.190002  13534400
+2020-12-21  86.150002  87.400002  84.779999  86.860001  31877300
+2020-12-22  86.860001  86.989998  85.430000  86.940002  23157000
+2020-12-23  86.529999  87.529999  86.400002  87.360001  17710200
+2020-12-28  87.790001  88.580002  87.080002  87.309998  26001300
+2020-12-29  87.970001  88.199997  86.510002  87.070000  19727500
+2020-12-30  87.190002  87.589996  86.650002  87.449997  30102700
 """
 ```
 
@@ -61,46 +68,38 @@ Date
 </p>
 </details>
 
-**Random stock quotes** <details>
+**Random stock quotes**
+<details>
 <p>
 
 ```python3
-from rndqts.quotes import Quotes
+from rndqts import Realistic
+from rndqts import Real
 
-# Caching real quotes from Yahoo.
-Quotes("PETR4.sa", progress=False).data
-Quotes("VALE3.sa", progress=False).data
-Quotes("CSNA3.sa", progress=False).data
-Quotes("USIM5.sa", progress=False).data
+# Real quotes to fetch from Yahoo.
+r1 = Real("PETR4.sa")
+r2 = Real("CSNA3.sa")
+r3 = Real("VALE3.sa")
+r4 = Real("USIM5.sa")
 
 # Generating random quotes.
-print(Quotes("rnd", seed=42).data)
+print(Realistic([r1, r2, r3, r4]).data)
 """
-           Open      High       Low     Close    Volume
-Date                                                   
-0      1.006622  1.030463  0.997351  1.001324         3
-1      1.002955  1.024479  0.990693  1.020405         9
-2      1.041271  1.076896  1.036691  1.062901        11
-3      1.069317  1.082148  1.056485  1.073594        13
-4      1.060106  1.107408  1.049558  1.095902        29
-...         ...       ...       ...       ...       ...
-45785  0.796538  0.829050  0.796538  0.821401  31357368
-45786  0.986282  1.018537  0.969475  1.001639  62714739
-45787  0.997002  1.040349  0.993323  1.031381  74688614
-45788  1.040943  1.048913  0.988340  0.996310  50376232
-45789  1.003717  1.022727  0.996310  1.000000   1751468
+        Open    High     Low   Close  Volume
+Date                                        
+0      99.00   99.91   98.32   99.18   12499
+1     112.18  121.43  112.18  109.59   15623
+2     111.38  114.11  107.45  111.46   11805
+3     110.42  111.39  109.03  110.30   10416
+4     111.11  111.40  110.25  110.61   13019
+...      ...     ...     ...     ...     ...
+147    92.82   94.06   92.82   92.82       5
+148    93.67   96.21   93.65   94.16       5
+149    92.54   96.34   91.04   93.43       7
+150    97.06  101.07   95.33   96.71       7
+151   100.05  107.92  100.05  100.05       9
 
-[45790 rows x 5 columns]
-
-"""
-```
-
-```python3
-
-
-
-"""
-
+[152 rows x 5 columns]
 """
 ```
 
@@ -108,39 +107,35 @@ Date
 </p>
 </details>
 
-**Saving as a CSV file** <details>
+**Saving as a CSV file**
+<details>
 <p>
 
 ```python3
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-Quotes("VALE3.sa").data.to_csv("/tmp/myfile.csv")
+Real("VALE3.sa").data.to_csv("/tmp/myfile.csv")
 
 
-"""
-
-"""
 ```
 
 
 </p>
 </details>
 
-**Plotting** <details>
+**Plotting**
+<details>
 <p>
 
 ```python3
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-Quotes("VALE3.sa")[1000:1060].plot()
+Real("VALE3.sa").plot()
 """
 Fetching VALE3.sa ...
 [*********************100%***********************]  1 of 1 completed
 """
 
-"""
-
-"""
 ```
 
 
@@ -161,22 +156,13 @@ Fetching VALE3.sa ...
 * [x] Realistic random quotes
   * [x] Ticker 'pseudo' generates (not so realistic) data without real quotes dependence (good for tests)
 
-* [ ] **Separate classes: Real, Random, Pseudo**
-  * [ ] Cacheable and identified by hash of args
+* [x] **Distinct kinds of quotes: Real, Realistic random, Synthetic Random**
+  * [x] Cacheable and identified by hash of args
   
-  * [ ] ***Real*** (market quotes)
-    * [ ] Args: ticker, start/end dates, slice<sup>1</sup>
-      * [ ] Default dates interval: 2020-01-01 - 2020-12-31
-  
-  * [ ] ***Random*** (realistic random quotes, .i.e, it is based on real quotes)
-    * [ ] Args: rndqts objects, seed, slice<sup>1</sup>
-
-
-  * [ ] ***Pseudo*** (pseudo random quotes)
-    * [ ] Args: seed, slice<sup>1</sup>
-    * [ ] Lazy
+  * [x] ***Real*** (market quotes)
+  * [x] ***Realistic*** (realistic random quotes, .i.e, it is based on real quotes)
+  * [x] ***Synthetic*** (quotes based interily on Gaussian distributions from pseudo random number generator)
+    * [x] Lazy/Infinite
 
 * [ ] News fetching
     * [ ] https://blog.datahut.co/scraping-nasdaq-news-using-python
-    
-<sup>1</sup>Slicing is intended to be done via squared brackets syntax, e.g., `quotes[3:40]`, not directly.

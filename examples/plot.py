@@ -1,7 +1,7 @@
 # Plotting
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-Quotes("VALE3.sa")[1000:1060].plot()
+Real("VALE3.sa").plot()
 """
 Fetching VALE3.sa ...
 [*********************100%***********************]  1 of 1 completed

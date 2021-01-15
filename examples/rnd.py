@@ -1,14 +1,13 @@
 # Random stock quotes
-from rndqts.quotes import Quotes
+from rndqts import Realistic
+from rndqts import Real
 
-# Caching real quotes from Yahoo.
-Quotes("PETR4.sa", progress=False).data
-Quotes("VALE3.sa", progress=False).data
-Quotes("CSNA3.sa", progress=False).data
-Quotes("USIM5.sa", progress=False).data
+# Real quotes to fetch from Yahoo.
+r1 = Real("PETR4.sa")
+r2 = Real("CSNA3.sa")
+r3 = Real("VALE3.sa")
+r4 = Real("USIM5.sa")
 
 # Generating random quotes.
-print(Quotes("rnd", seed=42).data)
+print(Realistic([r1, r2, r3, r4]).data)
 # ...
-
-

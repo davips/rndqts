@@ -1,5 +1,5 @@
 # Saving as a CSV file
-from rndqts.quotes import Quotes
+from rndqts import Real
 
-Quotes("VALE3.sa").data.to_csv("/tmp/myfile.csv")
+Real("VALE3.sa").data.to_csv("/tmp/myfile.csv")
 
