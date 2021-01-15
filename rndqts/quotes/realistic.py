@@ -150,10 +150,11 @@ class Realistic(Quotes):
         for o1var, h1var, l1var, c1var, v1var in allvariations.values:
             dic = {}
             v0 = int(math.ceil(v0 * v1var))
-            c0 = round(c0 * c1var, 2)
+            c1 = round(c0 * c1var, 2)
             dic.update(
-                Open=round(c0 * o1var, 2), High=round(c0 * h1var, 2), Low=round(c0 * l1var, 2), Close=c0, Volume=v0
+                Open=round(c0 * o1var, 2), High=round(c0 * h1var, 2), Low=round(c0 * l1var, 2), Close=c1, Volume=v0
             )
+            c0 = c1
             rows.append(dic)
         df = pd.DataFrame(rows)
         df.index.name = "Date"
