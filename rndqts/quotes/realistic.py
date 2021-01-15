@@ -59,7 +59,7 @@ class Realistic(Quotes):
         >>> # Replace 'Synthetic(seed=?)[:100]' by any real ticker like 'Real("MSFT")[:100]'.
         >>> base = [Synthetic(seed=1)[:100], Synthetic(seed=2)[:100]]
         >>> Realistic(base)[1]  # doctest: +NORMALIZE_WHITESPACE
-        array([  118.84,   118.87,   115.71,   111.95, 10328.  ])
+        array([  113.84,   113.87,   110.84,   111.95, 10328.  ])
 
     Parameters
     ----------
@@ -104,9 +104,9 @@ class Realistic(Quotes):
         >>> Realistic(base).data[:3]  # doctest: +NORMALIZE_WHITESPACE
                 Open      High       Low     Close    Volume
         Date
-        0     111.99  115.91  107.14  107.24    9749
-        1     118.84  118.87  115.71  111.95   10328
-        2      85.52   99.07   76.85   96.05   11127
+        0     104.43  108.09   99.91  107.24    9749
+        1     113.84  113.87  110.84  111.95   10328
+        2      99.67  115.47   89.57   96.05   11127
 
         Returns
         -------
