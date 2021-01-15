@@ -80,7 +80,7 @@ class Realistic(Quotes):
     seed: int = 0
     include_opposite: int = True
     varlim_pct: float = 24.99
-    verbosity: int = 1,
+    verbosity: int = 1
     _slice: slice = None
 
     def __post_init__(self):
