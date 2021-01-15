@@ -21,12 +21,11 @@
 #  time spent here.
 #  Relevant employers or funding agencies will be notified accordingly.
 
-import rndqts
 import setuptools
 
 NAME = "rndqts"
 
-VERSION = "0.2101.18"
+VERSION = "0.2101.19"
 
 AUTHOR = 'Davi Pereira-Santos'
 
