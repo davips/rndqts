@@ -25,7 +25,7 @@ import setuptools
 
 NAME = "rndqts"
 
-VERSION = "0.2101.21"
+VERSION = "0.2101.22"
 
 AUTHOR = 'Davi Pereira-Santos'
 
