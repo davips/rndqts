@@ -14,7 +14,8 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install from PyPI...
-pip install rndqts
+pip install --upgrade pip
+pip install -U rndqts
 
 # ...or, install from updated source code.
 pip install git+https://github.com/davips/rndqts
@@ -25,6 +26,7 @@ pip install git+https://github.com/davips/rndqts
 cd your-project
 source venv/bin/activate
 git clone https://github.com/davips/rndqts ../rndqts
+pip install --upgrade pip
 pip install -e ../rndqts
 ```
 
