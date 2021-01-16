@@ -4,6 +4,8 @@
 # rndqts
 Random stock market quotes
 
+<img src="https://raw.githubusercontent.com/davips/rndqts/main/examples/chart.png" alt="Output as a browser window" width="200" height="200">
+
 [Latest version](https://github.com/davips/rndqts)
 
 ## Installation
@@ -41,7 +43,7 @@ pip install -e ../rndqts
 <<plot>>
 
 <p><a href="https://github.com/davips/rndqts/blob/main/examples/plotvale3.png">
-<img src="examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
+<img src="https://raw.githubusercontent.com/davips/rndqts/main/examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
 </a></p>
 
 

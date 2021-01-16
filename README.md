@@ -4,6 +4,8 @@
 # rndqts
 Random stock market quotes
 
+<img src="https://raw.githubusercontent.com/davips/rndqts/main/examples/chart.png" alt="Output as a browser window" width="200" height="200">
+
 [Latest version](https://github.com/davips/rndqts)
 
 ## Installation
@@ -14,7 +16,8 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install from PyPI...
-pip install rndqts
+pip install --upgrade pip
+pip install -U rndqts
 
 # ...or, install from updated source code.
 pip install git+https://github.com/davips/rndqts
@@ -25,6 +28,7 @@ pip install git+https://github.com/davips/rndqts
 cd your-project
 source venv/bin/activate
 git clone https://github.com/davips/rndqts ../rndqts
+pip install --upgrade pip
 pip install -e ../rndqts
 ```
 
@@ -39,6 +43,8 @@ from rndqts import Real
 
 print(Real("VALE3.sa").data)
 """
+Fetching VALE3.sa ...
+[*********************100%***********************]  1 of 1 completed
                  Open       High        Low      Close    Volume
 Date                                                            
 2020-12-01  79.830002  81.500000  79.250000  81.250000  61441200
@@ -85,6 +91,12 @@ r4 = Real("USIM5.sa")
 # Generating random quotes.
 print(Realistic([r1, r2, r3, r4]).data)
 """
+Fetching PETR4.sa ...
+[*********************100%***********************]  1 of 1 completed
+Fetching CSNA3.sa ...
+[*********************100%***********************]  1 of 1 completed
+Fetching USIM5.sa ...
+[*********************100%***********************]  1 of 1 completed
         Open    High     Low   Close  Volume
 Date                                        
 0      99.82  100.73   99.13   99.18   12499
@@ -148,7 +160,7 @@ Fetching VALE3.sa ...
 </details>
 
 <p><a href="https://github.com/davips/rndqts/blob/main/examples/plotvale3.png">
-<img src="examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
+<img src="https://raw.githubusercontent.com/davips/rndqts/main/examples/plotvale3.png" alt="Output as a browser window" width="200" height="200">
 </a></p>
 
 
