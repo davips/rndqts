@@ -4,7 +4,7 @@
 # rndqts
 Random stock market quotes
 
-<img src="https://raw.githubusercontent.com/davips/rndqts/main/examples/chart.png" alt="Output as a browser window" width="200" height="200">
+<img src="https://raw.githubusercontent.com/davips/rndqts/main/chart.png">
 
 [Latest version](https://github.com/davips/rndqts)
 
