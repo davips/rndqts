@@ -21,22 +21,11 @@
 #  time spent here.
 #  Relevant employers or funding agencies will be notified accordingly.
 
-import hashlib
-
-import numpy as np
-from dataclasses import replace
-import plotly.graph_objects as go
-
-import glob
-import math
-import os
-import pickle
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
-import pandas as pd
 import yfinance as yf
 from garoupa import Hash
-from pandas import DataFrame
 
 from rndqts.quotes.abs.quotes import Quotes
 
@@ -72,14 +61,47 @@ class Real(Quotes):
         Not intended to be used. Use slicing on the onbject after it is created instead.
     """
     ticker: str
-    start: str = "2020-12-01"
-    end: str = "2020-12-31"
+    start: str = None
+    end: str = None
+    calendar_days: int = None
     verbosity: int = 1
     cached: bool = True
     _slice: slice = None
     _id: str = None
 
     def __post_init__(self):
+        if all([self.start, self.end, self.calendar_days]):
+            raise Exception("Cannot provide start, end and calendar_days together.")
+
+        # Dumb handling of date intervals.
+        if self.start and self.end:
+            delta = datetime.strptime(self.end, '%Y-%m-%d') - datetime.strptime(self.start, '%Y-%m-%d')
+            self.calendar_days = delta.days
+        elif self.start and self.calendar_days:
+            delta = timedelta(days=self.calendar_days)
+            self.end = (datetime.strptime(self.start, '%Y-%m-%d') + delta).strftime('%Y-%m-%d')
+        elif self.end and self.calendar_days:
+            delta = timedelta(days=self.calendar_days)
+            self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
+        else:
+            if self.calendar_days:
+                delta = timedelta(days=self.calendar_days)
+                self.end = datetime.today().strftime('%Y-%m-%d')
+                self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
+            elif self.start:
+                self.end = datetime.today().strftime('%Y-%m-%d')
+                delta = datetime.strptime(self.end, '%Y-%m-%d') - datetime.strptime(self.start, '%Y-%m-%d')
+                self.calendar_days = delta.days
+            elif self.end:
+                self.calendar_days = 14
+                delta = timedelta(days=self.calendar_days)
+                self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
+            else:
+                self.end = datetime.today().strftime('%Y-%m-%d')
+                self.calendar_days = 14
+                delta = timedelta(days=self.calendar_days)
+                self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
+
         cfg = f"{self.ticker}-{self.start}-{self.end}-{self._slice}"
         super().__init__(self.verbosity, self.cached, self._slice, self._id or Hash(cfg.encode()).id)
 
@@ -90,15 +112,14 @@ class Real(Quotes):
 
         Usage:
 
-        >>> from rndqts import Realistic, Synthetic
-        >>> # Replace 'Synthetic(seed=?)[:100]' by any real ticker like 'Real("MSFT")[:100]'.
-        >>> base = [Synthetic(seed=1, cached=False)[:100], Synthetic(seed=2, cached=False)[:100]]
-        >>> Realistic(base, cached=False).data[:3]  # doctest: +NORMALIZE_WHITESPACE
-                    Open        High         Low       Close  Volume
+        >>> from rndqts import Real
+        >>> Real("MSFT", start="2021-01-01", calendar_days=7, verbosity=0).data  # doctest: +NORMALIZE_WHITESPACE
+                          Open        High         Low       Close    Volume
         Date
-        0     104.43  108.09   99.91  107.24    9749
-        1     113.84  113.87  110.84  111.95   10328
-        2      99.67  115.47   89.57   96.05   11127
+        2021-01-04  222.529999  223.000000  214.809998  217.690002  37130100
+        2021-01-05  217.259995  218.520004  215.699997  217.899994  23823000
+        2021-01-06  212.169998  216.490005  211.940002  212.250000  35930700
+        2021-01-07  214.039993  219.339996  213.710007  218.289993  27694500
 
         Returns
         -------

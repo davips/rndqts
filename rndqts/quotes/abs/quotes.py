@@ -24,6 +24,7 @@ import glob
 import math
 import os
 import pickle
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import replace, dataclass
 from pathlib import Path
@@ -108,10 +109,13 @@ class Quotes(ABC):
                     zip(self.data.values[1:], self.data["Close"].values, self.data["Volume"].values):
                 dic = {}
                 tocheck = [str(math.inf), str(math.nan), str(0.0)]
-                if str(c1 / c0) in tocheck:
-                    c0 = c1 = 1
-                if str(v1 / v0) in tocheck:
-                    v0 = v1 = 1
+
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", RuntimeWarning)
+                    if str(c1 / c0) in tocheck:
+                        c0 = c1 = 1
+                    if str(v1 / v0) in tocheck:
+                        v0 = v1 = 1
                 dic.update(Open=o1 / c0, High=h1 / c0, Low=l1 / c0, Close=c1 / c0, Volume=v1 / v0)
                 rows.append(dic)
             self._variations = pd.DataFrame(rows)
@@ -120,7 +124,6 @@ class Quotes(ABC):
 
     def store(self):
         """Write data to the local cache."""
-        raise Exception
         with open(self.filename, 'wb') as file:
             pickle.dump(self._data, file)
 
