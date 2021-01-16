@@ -26,40 +26,55 @@ import os
 import pickle
 from abc import ABC, abstractmethod
 from dataclasses import replace, dataclass
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
 from garoupa import Hash
+from garoupa.decorator import classproperty
 from pandas import DataFrame
 
 
 class Quotes(ABC):
     """Base-class for different types of quote generators."""
     _data = None
+    _appdir = None
 
-    def __init__(self, verbosity: int, _slice: slice, _id: str):
+    def __init__(self, verbosity: int, cached: bool, _slice: slice, _id: str):
         self.verbosity = verbosity
+        self.cached = True if cached is None else cached
         _slice = _slice or slice(199999999)
         self._slice = slice(_slice.start or 0, _slice.stop, _slice.step or 1)
         self.id = _id
-        self.filename = f".rndqts/{self.id}.pickle"
+        self.filename = f"{self.appdir}/{self.id}.pickle"
         self._variations = None
+
+    @classproperty
+    def appdir(self):
+        if self._appdir is None:
+            self._appdir = f"{str(Path.home())}/.rndqts"
+            if not os.path.exists(self.appdir):
+                # Create app data dir if inexistent.
+                os.makedirs(self.appdir)
+        return self._appdir
 
     @property
     def data(self) -> DataFrame:
         if self._data is None:
-            # Return cached data if any.
-            if os.path.isfile(self.filename):
-                with open(self.filename, 'rb') as file:
-                    try:
-                        self._data = pickle.load(file)
-                    except Exception as e:
-                        raise Exception(self.filename, e)
-                    return self._data
+            if self.cached:
+                # Return cached data if any.
+                if os.path.isfile(self.filename):
+                    with open(self.filename, 'rb') as file:
+                        try:
+                            self._data = pickle.load(file)
+                        except Exception as e:
+                            raise Exception(self.filename, e)
+                        return self._data
 
             # Generate data and cache it.
             self._data = self._data_()
-            self.store()
+            if self.cached:
+                self.store()
 
         return self._data
 
@@ -76,7 +91,7 @@ class Quotes(ABC):
 
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> quotes = Synthetic()[:3]
+            >>> quotes = Synthetic(cached=False)[:3]
             >>> quotes.variations  # doctest: +NORMALIZE_WHITESPACE
                       Open      High       Low     Close    Volume
             Date
@@ -105,11 +120,7 @@ class Quotes(ABC):
 
     def store(self):
         """Write data to the local cache."""
-
-        # Create app data dir if inexistent.
-        if not os.path.exists('.rndqts'):
-            os.makedirs('.rndqts')
-
+        raise Exception
         with open(self.filename, 'wb') as file:
             pickle.dump(self._data, file)
 
@@ -117,7 +128,7 @@ class Quotes(ABC):
         """
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> quotes = Synthetic(seed=42)[:1000]
+            >>> quotes = Synthetic(seed=42, cached=False)[:1000]
             >>> quotes.save_csv("/run/shm/rndqts-doctest.csv")
 
             >>> # Default name: pseudo_None_None_42.csv.
@@ -141,7 +152,7 @@ class Quotes(ABC):
 
         Usage:
         >>> from rndqts.quotes.synthetic import Synthetic
-        >>> quotes = Synthetic(seed=42)[:60]
+        >>> quotes = Synthetic(seed=42, cached=False)[:60]
         >>> quotes.plot()  # doctest: +SKIP
         """
         df = self.data
@@ -153,7 +164,7 @@ class Quotes(ABC):
         """
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> for row in Synthetic()[:2]:
+            >>> for row in Synthetic(cached=False)[:2]:
             ...     print(row)
             [  112.22   117.64   104.     111.43 11868.  ]
             [  121.24   122.02   100.54   108.78 11689.  ]
@@ -169,10 +180,10 @@ class Quotes(ABC):
 
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> list(Synthetic()[:2])
+            >>> list(Synthetic(cached=False)[:2])
             [array([  112.22,   117.64,   104.  ,   111.43, 11868.  ]), array([  121.24,   122.02,   100.54,   108.78, 11689.  ])]
 
-            >>> print(Synthetic()[1])
+            >>> print(Synthetic(cached=False)[1])
             [  112.22   117.64   104.     111.43 11868.  ]
         """
 
@@ -182,7 +193,8 @@ class Quotes(ABC):
             # noinspection PyDataclass
             newquotes = replace(self, _slice=item, _id=None)
             newquotes._data = self.data[item]
-            newquotes.store()
+            if newquotes.cached:
+                newquotes.store()
             return newquotes
         elif isinstance(item, int):
             return list(self[item:item + 1])[0]
@@ -192,7 +204,7 @@ class Quotes(ABC):
         """
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> Synthetic()[:5].show()  # doctest: +NORMALIZE_WHITESPACE
+            >>> Synthetic(cached=False)[:5].show()  # doctest: +NORMALIZE_WHITESPACE
                        Open       High        Low      Close   Volume
             Date
             0     112.22  117.64  104.00  111.43   11868
@@ -207,10 +219,10 @@ class Quotes(ABC):
         """
         print(self.data)
 
-    @staticmethod
-    def cached():
+    @classmethod
+    def cached_items(cls):
         """Generator cantaining all cached Quotes objects"""
-        files = glob.glob('.rndqts/*.pickle')
+        files = glob.glob(f"{cls.appdir}/*.pickle")
         for f in files:
             with open(f, 'rb') as file:
                 yield pickle.load(file)
@@ -236,7 +248,8 @@ class Quotes(ABC):
                 # noinspection PyDataclass
                 newquotes = replace(self, _id=Hash(attribute.to_csv().encode()).id)
                 newquotes._data = attribute
-                newquotes.store()
+                if newquotes.cached:
+                    newquotes.store()
                 return newquotes
 
             # Handle other direct values.
@@ -257,5 +270,6 @@ class DFWrapper:
             # noinspection PyDataclass
             newquotes = replace(self.quotes, _id=Hash(val.to_csv().encode()).id)
             newquotes._data = val
-            newquotes.store()
+            if newquotes.cached:
+                newquotes.store()
             return newquotes

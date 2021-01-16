@@ -66,12 +66,12 @@ class Synthetic(Quotes):
 
     Usage:
         >>> from rndqts.quotes.synthetic import Synthetic
-        >>> type(Synthetic().data)
+        >>> type(Synthetic(cached=False).data)
         <class 'rndqts.data.lazydataframe.LazyDataFrame'>
-        >>> Synthetic()[2]  # doctest: +NORMALIZE_WHITESPACE
+        >>> Synthetic(cached=False)[2]  # doctest: +NORMALIZE_WHITESPACE
         array([  112.22,   117.64,   104.  ,   111.43, 11868.  ])
 
-        >>> Synthetic()[:3].data  # doctest: +NORMALIZE_WHITESPACE
+        >>> Synthetic(cached=False)[:3].data  # doctest: +NORMALIZE_WHITESPACE
                 Open    High     Low   Close  Volume
         Date
         0     112.22  117.64  104.00  111.43   11868
@@ -95,12 +95,13 @@ class Synthetic(Quotes):
     scale: float = 0.1
     varlim_pct: float = 24.99
     verbosity: int = 1
+    cached: bool = True
     _slice: slice = None
     _id: str = None
 
     def __post_init__(self):
         cfg = f"{self.seed}-{self.varlim_pct}-{self._slice}"
-        super().__init__(self.verbosity, self._slice, self._id or Hash(cfg.encode()).id)
+        super().__init__(self.verbosity, self.cached, self._slice, self._id or Hash(cfg.encode()).id)
 
     @property
     def data(self) -> DataFrame:  # Override to avoid caching and to specialize doctest.
@@ -109,7 +110,7 @@ class Synthetic(Quotes):
 
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> Synthetic()[:3].data  # doctest: +NORMALIZE_WHITESPACE
+            >>> Synthetic(cached=False)[:3].data  # doctest: +NORMALIZE_WHITESPACE
                     Open    High     Low   Close  Volume
             Date
             0     112.22  117.64  104.00  111.43   11868

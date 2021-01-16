@@ -43,6 +43,8 @@ from rndqts import Real
 
 print(Real("VALE3.sa").data)
 """
+Fetching VALE3.sa ...
+[*********************100%***********************]  1 of 1 completed
                  Open       High        Low      Close    Volume
 Date                                                            
 2020-12-01  79.830002  81.500000  79.250000  81.250000  61441200
@@ -89,6 +91,12 @@ r4 = Real("USIM5.sa")
 # Generating random quotes.
 print(Realistic([r1, r2, r3, r4]).data)
 """
+Fetching PETR4.sa ...
+[*********************100%***********************]  1 of 1 completed
+Fetching CSNA3.sa ...
+[*********************100%***********************]  1 of 1 completed
+Fetching USIM5.sa ...
+[*********************100%***********************]  1 of 1 completed
         Open    High     Low   Close  Volume
 Date                                        
 0      99.82  100.73   99.13   99.18   12499

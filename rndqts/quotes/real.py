@@ -75,12 +75,13 @@ class Real(Quotes):
     start: str = "2020-12-01"
     end: str = "2020-12-31"
     verbosity: int = 1
+    cached: bool = True
     _slice: slice = None
     _id: str = None
 
     def __post_init__(self):
         cfg = f"{self.ticker}-{self.start}-{self.end}-{self._slice}"
-        super().__init__(self.verbosity, self._slice, self._id or Hash(cfg.encode()).id)
+        super().__init__(self.verbosity, self.cached, self._slice, self._id or Hash(cfg.encode()).id)
 
     @property
     def data(self):  # Override just to specialize doctest.
@@ -91,8 +92,8 @@ class Real(Quotes):
 
         >>> from rndqts import Realistic, Synthetic
         >>> # Replace 'Synthetic(seed=?)[:100]' by any real ticker like 'Real("MSFT")[:100]'.
-        >>> base = [Synthetic(seed=1)[:100], Synthetic(seed=2)[:100]]
-        >>> Realistic(base).data[:3]  # doctest: +NORMALIZE_WHITESPACE
+        >>> base = [Synthetic(seed=1, cached=False)[:100], Synthetic(seed=2, cached=False)[:100]]
+        >>> Realistic(base, cached=False).data[:3]  # doctest: +NORMALIZE_WHITESPACE
                     Open        High         Low       Close  Volume
         Date
         0     104.43  108.09   99.91  107.24    9749

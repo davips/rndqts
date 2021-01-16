@@ -58,8 +58,8 @@ class Realistic(Quotes):
     Usage:
         >>> from rndqts import Realistic, Synthetic
         >>> # Replace 'Synthetic(seed=?)[:100]' by any real ticker like 'Real("MSFT")[:100]'.
-        >>> base = [Synthetic(seed=1)[:100], Synthetic(seed=2)[:100]]
-        >>> Realistic(base)[1]  # doctest: +NORMALIZE_WHITESPACE
+        >>> base = [Synthetic(seed=1, cached=False)[:100], Synthetic(seed=2, cached=False)[:100]]
+        >>> Realistic(base, cached=False)[1]  # doctest: +NORMALIZE_WHITESPACE
         array([  113.84,   113.87,   110.84,   111.95, 10328.  ])
 
     Parameters
@@ -82,13 +82,14 @@ class Realistic(Quotes):
     include_opposite: int = True
     varlim_pct: float = 24.99
     verbosity: int = 1
+    cached: bool = True
     _slice: slice = None
     _id: str = None
 
     def __post_init__(self):
         base = [qid for qid in sorted(q.id for q in self.base)]
         cfg = f"{base}-{self.seed}-{self.include_opposite}-{self.varlim_pct}-{self._slice}"
-        super().__init__(self.verbosity, self._slice, self._id or Hash(cfg.encode()).id)
+        super().__init__(self.verbosity, self.cached, self._slice, self._id or Hash(cfg.encode()).id)
 
     @property
     def data(self):  # Override just to specialize doctest.
@@ -99,8 +100,8 @@ class Realistic(Quotes):
 
         >>> from rndqts import Realistic, Synthetic
         >>> # Replace 'Synthetic(seed=?)[:100]' by any real ticker like 'Real("MSFT")[:100]'.
-        >>> base = [Synthetic(seed=1)[:100], Synthetic(seed=2)[:100]]
-        >>> Realistic(base).data[:3]  # doctest: +NORMALIZE_WHITESPACE
+        >>> base = [Synthetic(seed=1, cached=False)[:100], Synthetic(seed=2, cached=False)[:100]]
+        >>> Realistic(base, cached=False).data[:3]  # doctest: +NORMALIZE_WHITESPACE
                 Open      High       Low     Close    Volume
         Date
         0     104.43  108.09   99.91  107.24    9749

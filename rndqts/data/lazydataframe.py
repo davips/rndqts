@@ -43,7 +43,7 @@ class LazyDataFrame:
         """
         Usage:
             >>> from rndqts.quotes.synthetic import Synthetic
-            >>> Synthetic().data[:3].count()
+            >>> Synthetic(cached=False).data[:3].count()
             Open      3
             High      3
             Low       3
@@ -52,7 +52,7 @@ class LazyDataFrame:
             dtype: int64
 
             >>> try:
-            ...     Synthetic().data.count()
+            ...     Synthetic(cached=False).data.count()
             ... except Exception as e:
             ...     print(e)  # doctest: +NORMALIZE_WHITESPACE
             LazyDataFrame error:

@@ -12,6 +12,5 @@ plot.pdf
 .coverage
 build
 dist
-.rndqts
 *.csv
 .run
