@@ -32,10 +32,17 @@ import plotly.graph_objects as go
 from garoupa import Hash
 from pandas import DataFrame
 
+from rndqts.proxy import Proxy
+
 
 class Quotes(ABC):
     """Base-class for different types of quote generators."""
     _data = None
+
+    def __new__(cls, *args, **kwargs):
+        instance = object.__new__(cls)
+        instance.__init__(*args, **kwargs)
+        return Proxy(instance)
 
     def __init__(self, verbosity: int, _slice: slice, _id: str):
         self.verbosity = verbosity
@@ -221,30 +228,29 @@ class Quotes(ABC):
         lim = varlim_pct / 100 + 1
         return variations.applymap(lambda a: a if -lim < a < lim else -lim if a < 0 else lim)
 
-    def __getattr__(self, item):
-        """Redirect any pandas attribute to self.data"""
-        # TODO: __add__ etc. (through pandas or manually)
-        if item in dir(pd.DataFrame):  # and not item.startswith("_"):
-            attribute = getattr(self.data, item)
-
-            # Handle methods.
-            if callable(attribute) or isinstance(attribute, classmethod):
-                return DFWrapper(self, attribute)
-
-            # Handle direct df value.
-            if isinstance(attribute, DataFrame):
-                # noinspection PyDataclass
-                newquotes = replace(self, _id=Hash(attribute.to_csv().encode()).id)
-                newquotes._data = attribute
-                newquotes.store()
-                return newquotes
-
-            # Handle other direct values.
-            return attribute
-
-        print(item)
-        return super().__getattribute__(item)
-
+    # def __getattr__(self, item):
+    #     """Redirect any pandas attribute to self.data"""
+    #     # TODO: __add__ etc. (through pandas or manually)
+    #     if item in dir(pd.DataFrame):  # and not item.startswith("_"):
+    #         attribute = getattr(self.data, item)
+    #
+    #         # Handle methods.
+    #         if callable(attribute) or isinstance(attribute, classmethod):
+    #             return DFWrapper(self, attribute)
+    #
+    #         # Handle direct df value.
+    #         if isinstance(attribute, DataFrame):
+    #             # noinspection PyDataclass
+    #             newquotes = replace(self, _id=Hash(attribute.to_csv().encode()).id)
+    #             newquotes._data = attribute
+    #             newquotes.store()
+    #             return newquotes
+    #
+    #         # Handle other direct values.
+    #         return attribute
+    #
+    #     print(item)
+    #     return super().__getattribute__(item)
 
 @dataclass
 class DFWrapper:
@@ -255,6 +261,7 @@ class DFWrapper:
         val = self.attribute(*args, **kwargs)
         if isinstance(val, DataFrame):
             # noinspection PyDataclass
+            print(type(self.quotes))
             newquotes = replace(self.quotes, _id=Hash(val.to_csv().encode()).id)
             newquotes._data = val
             newquotes.store()

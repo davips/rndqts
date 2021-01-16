@@ -26,11 +26,12 @@ import pandas as pd
 from numpy.random import RandomState
 import numpy as np
 
+
 @dataclass
 class LazyDataFrame:
     prev_close: float
     prev_volume: float
-    rnd:RandomState
+    rnd: RandomState
     func: callable
 
     @staticmethod
@@ -39,40 +40,40 @@ class LazyDataFrame:
                f"Please slice this LazyDataFrame before accessing pandas features, e.g.:\n" \
                f"lazydf[:100]{item}"
 
-    def __getattr__(self, item):
-        """
-        Usage:
-            >>> from rndqts.quotes.synthetic import Synthetic
-            >>> Synthetic().data[:3].count()
-            Open      3
-            High      3
-            Low       3
-            Close     3
-            Volume    3
-            dtype: int64
-
-            >>> try:
-            ...     Synthetic().data.count()
-            ... except Exception as e:
-            ...     print(e)  # doctest: +NORMALIZE_WHITESPACE
-            LazyDataFrame error:
-            The pandas feature <count> may be implemented in the future if it is  compatible with lazy/infinite data.
-            Please slice this LazyDataFrame before accessing pandas features, e.g.:
-            lazydf[:100].count
-
-        Parameters
-        ----------
-        item
-
-        Returns
-        -------
-
-        """
-        if item in dir(pd.DataFrame) and not item.startswith("_"):
-            msg = self._tip("." + item)
-            raise Exception(f"LazyDataFrame error:\n"
-                            f"The pandas feature <{item}> may be implemented in the future if it is {msg}")
-        return super().__getattribute__(item)
+    # def __getattr__(self, item):
+    #     """
+    #     Usage:
+    #         >>> from rndqts.quotes.synthetic import Synthetic
+    #         >>> Synthetic().data[:3].count()
+    #         Open      3
+    #         High      3
+    #         Low       3
+    #         Close     3
+    #         Volume    3
+    #         dtype: int64
+    #
+    #         >>> try:
+    #         ...     Synthetic().data.count()
+    #         ... except Exception as e:
+    #         ...     print(e)  # doctest: +NORMALIZE_WHITESPACE
+    #         LazyDataFrame error:
+    #         The pandas feature <count> may be implemented in the future if it is  compatible with lazy/infinite data.
+    #         Please slice this LazyDataFrame before accessing pandas features, e.g.:
+    #         lazydf[:100].count
+    #
+    #     Parameters
+    #     ----------
+    #     item
+    #
+    #     Returns
+    #     -------
+    #
+    #     """
+    #     if item in dir(pd.DataFrame) and not item.startswith("_"):
+    #         msg = self._tip("." + item)
+    #         raise Exception(f"LazyDataFrame error:\n"
+    #                         f"The pandas feature <{item}> may be implemented in the future if it is {msg}")
+    #     return super().__getattribute__(item)
 
     def __getitem__(self, item):
         direct = False
@@ -100,5 +101,12 @@ class LazyDataFrame:
             return np.array(list(row.values()))
 
         df = pd.DataFrame(rows)
+        df.index.name = "Date"
+        return df
+
+    @property
+    def unevaluated_data(self):
+        # print("LazyDataFrame warning: Accessing pandas properties of an unevaluated data.")
+        df = pd.DataFrame([], columns=["Date", "Open", "High", "Low""Close", "Volume"], dtype=float)
         df.index.name = "Date"
         return df

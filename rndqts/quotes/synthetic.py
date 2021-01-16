@@ -55,6 +55,8 @@ import pandas as pd
 import yfinance as yf
 from garoupa import Hash
 from pandas import DataFrame
+
+from rndqts.proxy import Proxy
 from rndqts.quotes.abs.quotes import Quotes
 from rndqts.data.lazydataframe import LazyDataFrame
 
@@ -154,4 +156,8 @@ class Synthetic(Quotes):
             return df
 
         # Infinite DataFrame.
-        return LazyDataFrame(c0, v0, rnd_, newrow)
+        return Proxy(LazyDataFrame(c0, v0, rnd_, newrow))
+
+    # def __add__(self, other):
+    #     return 5
+
