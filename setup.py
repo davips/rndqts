@@ -30,7 +30,7 @@ pkg_resources.require(['pip >= 20.3.3'])  # Needed by numba.
 
 NAME = "rndqts"
 
-VERSION = "0.2101.26"
+VERSION = "0.2101.27"
 
 AUTHOR = 'Davi Pereira-Santos'
 
