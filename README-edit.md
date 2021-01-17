@@ -47,7 +47,7 @@ pip install -e ../rndqts
 </a></p>
 
 
-## Features / TODO
+## Features (current or planned)
 
 * [x] Fetch from yahoo
 * [x] Automatic local caching
