@@ -53,16 +53,22 @@ pip install -e ../rndqts
 * [x] Automatic local caching
 * [x] Slicing
 * [x] Plot candle sticks
-* [x] Realistic random quotes
-  * [x] Ticker 'pseudo' generates (not so realistic) data without real quotes dependence (good for tests)
+* [x] Cacheable and identified by hash id
 
-* [x] **Distinct kinds of quotes: Real, Realistic random, Synthetic Random**
-  * [x] Cacheable and identified by hash of args
   
-  * [x] ***Real*** (market quotes)
-  * [x] ***Realistic*** (realistic random quotes, .i.e, it is based on real quotes)
-  * [x] ***Synthetic*** (quotes based interily on Gaussian distributions from pseudo random number generator)
-    * [x] Lazy/Infinite
+* [x] **Distinct kinds of quotes**
+  * [x] ***Real*** 
+    * market quotes
+  * [x] ***Realistic***
+    * random, based on real quotes
+  * [x] ***Synthetic***
+    * entirely based on Gaussian distributions from a pseudo random number generator
+    * good for software test
+    * lazy / infinite
+  * [ ] ***Holding***
+    * combination of real quotes, without randomness
+    * useful for dataset augmentation with fictional tickers
 
-* [ ] News fetching
+
+* [ ] **News fetching**
     * [ ] https://blog.datahut.co/scraping-nasdaq-news-using-python
