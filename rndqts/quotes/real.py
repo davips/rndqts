@@ -72,6 +72,7 @@ class Real(Quotes):
     def __post_init__(self):
         if all([self.start, self.end, self.calendar_days]):
             raise Exception("Cannot provide start, end and calendar_days together.")
+        self.ticker = self.ticker.upper()
 
         # Dumb handling of date intervals.
         if self.start and self.end:
@@ -86,10 +87,10 @@ class Real(Quotes):
         else:
             if self.calendar_days:
                 delta = timedelta(days=self.calendar_days)
-                self.end = datetime.today().strftime('%Y-%m-%d')
+                self.end = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
                 self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
             elif self.start:
-                self.end = datetime.today().strftime('%Y-%m-%d')
+                self.end = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
                 delta = datetime.strptime(self.end, '%Y-%m-%d') - datetime.strptime(self.start, '%Y-%m-%d')
                 self.calendar_days = delta.days
             elif self.end:
@@ -97,7 +98,7 @@ class Real(Quotes):
                 delta = timedelta(days=self.calendar_days)
                 self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')
             else:
-                self.end = datetime.today().strftime('%Y-%m-%d')
+                self.end = "2020-12-31"
                 self.calendar_days = 14
                 delta = timedelta(days=self.calendar_days)
                 self.start = (datetime.strptime(self.end, '%Y-%m-%d') - delta).strftime('%Y-%m-%d')

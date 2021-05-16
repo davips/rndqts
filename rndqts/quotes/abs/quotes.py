@@ -32,7 +32,6 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 from garoupa import Hash
-from garoupa.decorator import classproperty
 from pandas import DataFrame
 
 
@@ -50,7 +49,7 @@ class Quotes(ABC):
         self.filename = f"{self.appdir}/{self.id}.pickle"
         self._variations = None
 
-    @classproperty
+    @property
     def appdir(self):
         if self._appdir is None:
             self._appdir = f"{str(Path.home())}/.rndqts"
@@ -151,7 +150,7 @@ class Quotes(ABC):
         return self.data.to_csv(filename)
 
     def plot(self):  # pragma: no cover
-        """Item or slice
+        """
 
         Usage:
         >>> from rndqts.quotes.synthetic import Synthetic

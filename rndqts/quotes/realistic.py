@@ -117,7 +117,7 @@ class Realistic(Quotes):
     def _data_(self):
         # Random quotes from real data.  ######################################################################
         def opposite(qs: Quotes):
-            qs_op = qs.variations.applymap(lambda a: 1 / a)
+            qs_op = qs.variations.applymap(lambda a: (1 / a if a != 0 else 2))
             newrows = []
             for idx, row in qs_op.iterrows():
                 newrow = dict(row.to_dict())
