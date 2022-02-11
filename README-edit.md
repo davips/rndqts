@@ -36,7 +36,9 @@ pip install -e ../rndqts
 
 <<real>>
 
-<<rnd>>
+<<realistic>>
+
+<<synthetic>>
 
 <<ascsv>>
 
