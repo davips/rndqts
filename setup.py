@@ -51,7 +51,7 @@ CLASSIFIERS = ['Intended Audience :: Science/Research',
                'Programming Language :: Python :: 3.7']
 
 INSTALL_REQUIRES = [
-    'yfinance', 'matplotlib', 'plotly', 'numpy', 'garoupa'
+    'yfinance', 'matplotlib', 'plotly', 'numpy', 'garoupa==0.2101.12'
     # "numba"  # pip>v19 required for numba, so the user installs it if needed
 ]
 
